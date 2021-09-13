@@ -25,6 +25,12 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// https://mvnrepository.com/artifact/joda-time/joda-time
+	implementation group: 'joda-time', name: 'joda-time', version: '2.10.10'
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-joda
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.12.5'
+
 }
 
 test {

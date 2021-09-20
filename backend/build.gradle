@@ -30,6 +30,10 @@ dependencies {
 	implementation group: 'joda-time', name: 'joda-time', version: '2.10.10'
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-joda
 	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.12.5'
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.4'
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.12.5'
 
 }
 

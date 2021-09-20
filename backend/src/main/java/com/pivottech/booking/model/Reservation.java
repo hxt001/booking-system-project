@@ -5,15 +5,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 @Data
 public class Reservation {
 
     static int counter = 0;
 
     @Setter(AccessLevel.NONE) final Integer id;
-    DateTime startTime;
-    DateTime endTime;
-    String description;
+    @NotNull DateTime startTime;
+    @NotNull DateTime endTime;
+    @NotEmpty String description;
 
     @Builder
     @JsonCreator

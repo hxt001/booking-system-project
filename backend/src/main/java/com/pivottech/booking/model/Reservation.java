@@ -5,15 +5,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.joda.time.DateTime;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+@Entity
 @Data
 public class Reservation {
 
-    static int counter = 0;
-
-    @Setter(AccessLevel.NONE) final Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Setter(AccessLevel.NONE)
+    Long id;
     @NotNull DateTime startTime;
     @NotNull DateTime endTime;
     @NotEmpty String description;
@@ -25,7 +31,6 @@ public class Reservation {
             @JsonProperty("endTime") DateTime endTime,
             @JsonProperty("description") String description
     ) {
-        this.id = counter++;
         this.startTime = startTime;
         this.endTime = endTime;
         this.description = description;

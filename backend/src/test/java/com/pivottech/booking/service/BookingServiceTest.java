@@ -1,20 +1,28 @@
 package com.pivottech.booking.service;
 
 import com.pivottech.booking.model.Reservation;
+import com.pivottech.booking.repository.ReservationRepository;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
+
+    @Mock
+    ReservationRepository reservationRepository;
 
     BookingService service;
 
     @BeforeEach
     void setUp() {
-        service = new BookingService();
+        service = new BookingService(reservationRepository);
         service.createReservation(
                 Reservation.builder()
                         .description("initial reservation")
@@ -43,7 +51,7 @@ class BookingServiceTest {
 
     @Test
     void deleteReservation() {
-        service.deleteReservation(0);
+        service.deleteReservation(0L);
         assertEquals(0, service.getReservations().size());
     }
 

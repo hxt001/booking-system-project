@@ -1,33 +1,34 @@
 package com.pivottech.booking.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.joda.time.DateTime;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+@Entity
 @Data
+@Builder()
+@AllArgsConstructor
+@NoArgsConstructor
 public class Reservation {
 
-    static int counter = 0;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Setter(AccessLevel.NONE)
+    Long id;
 
-    @Setter(AccessLevel.NONE) final Integer id;
-    @NotNull DateTime startTime;
-    @NotNull DateTime endTime;
-    @NotEmpty String description;
+    @NotNull
+    DateTime startTime;
 
-    @Builder
-    @JsonCreator
-    public Reservation(
-            @JsonProperty("startTime") DateTime startTime,
-            @JsonProperty("endTime") DateTime endTime,
-            @JsonProperty("description") String description
-    ) {
-        this.id = counter++;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.description = description;
-    }
+    @NotNull
+    DateTime endTime;
+
+    @NotEmpty
+    String description;
+
 }

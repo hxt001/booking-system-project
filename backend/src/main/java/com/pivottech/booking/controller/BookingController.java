@@ -2,6 +2,8 @@ package com.pivottech.booking.controller;
 
 import com.pivottech.booking.model.Reservation;
 import com.pivottech.booking.service.BookingService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +15,8 @@ import java.util.List;
 @RequestMapping("reservations")
 public class BookingController {
 
+    final static int DEFAULT_PAGE_SIZE = 50;
+
     final BookingService bookingService;
 
     public BookingController(BookingService bookingService) {
@@ -20,12 +24,16 @@ public class BookingController {
     }
 
     @GetMapping("/")
-    public List<Reservation> list(@RequestParam(name="limit", value="10") int limit) {
-        return bookingService.getReservations(limit);
+    public List<Reservation> list(
+            @RequestParam(name = "limit", required = false) int limit,
+            @RequestParam(name = "terms", required = false) String searchTerms
+    ) {
+        Pageable pageable = PageRequest.ofSize(limit > 0 ? limit : DEFAULT_PAGE_SIZE);
+        return bookingService.getReservations(pageable, searchTerms);
     }
 
     @GetMapping("/{id}")
-    public Reservation getById(@PathVariable("id")  int id) {
+    public Reservation getById(@PathVariable("id") long id) {
         Reservation resv = this.bookingService.getReservationById(id);
         if (resv == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -40,7 +48,7 @@ public class BookingController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") int id) {
+    public void delete(@PathVariable("id") long id) {
         if (!this.bookingService.deleteReservation(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

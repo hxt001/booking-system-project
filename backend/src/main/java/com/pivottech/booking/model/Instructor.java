@@ -7,9 +7,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "Student")
+@Entity(name = "Instructor")
 @Data
-public class Student {
+public class Instructor {
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -18,9 +18,8 @@ public class Student {
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "user_id")
     @MapsId
-    @JsonManagedReference("user-student")
+    @JsonManagedReference("user-instructor")
     User user;
 
-    String grade;
+    String introduction;
 }
-

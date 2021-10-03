@@ -1,37 +1,31 @@
 package com.pivottech.booking.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
 
-@Entity(name = "Reservation")
+@Entity(name = "Availability")
 @Table(indexes = {
         @Index(
                 name="index_instructor_start_end",
-                columnList = "utcStartTime, utcEndTime, student_id",
+                columnList = "utcStartTime, utcEndTime, instructor_id",
                 unique = true
         )
 })
 @Data
-@Builder()
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class Reservation {
+@AllArgsConstructor
+public class Availability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter(AccessLevel.NONE)
     Long id;
-
-    String description;
-
-    @OneToMany(mappedBy = "reservation")
-    @JsonManagedReference()
-    List<Availability> availabilities;
 
     @NotNull
     LocalDateTime utcStartTime;
@@ -40,7 +34,16 @@ public class Reservation {
     LocalDateTime utcEndTime;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "instructor_id")
     @NotNull
-    Student student;
+    Instructor instructor;
+
+    @ManyToOne
+    @JoinColumn(name = "reservation_id")
+    @JsonBackReference
+    Reservation reservation;
+
+    @Version
+    @Setter(AccessLevel.NONE)
+    Integer version;
 }

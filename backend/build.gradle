@@ -25,10 +25,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// https://mvnrepository.com/artifact/joda-time/joda-time
-	implementation group: 'joda-time', name: 'joda-time', version: '2.10.10'
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-joda
-	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.12.5'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.4'
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
@@ -37,7 +33,6 @@ dependencies {
 	// Spring JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'org.jadira.usertype:usertype.core:6.0.1.GA'
 	runtimeOnly 'mysql:mysql-connector-java:8.0.26'
 
 	// Mockito

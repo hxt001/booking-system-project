@@ -25,25 +25,28 @@ export default function PTLoginForm(): React.ReactElement {
         setUserNameInput(e.target.value);
     }, []);
 
-    const {setUserName, setRole} = useContext(BookingSystemContext);
+    const { setUserName, setRole } = useContext(BookingSystemContext);
     const history = useHistory();
     const onSubmit = useCallback(() => {
         const mockedUser = getUser(userNameInput);
-        
+
         // Setup Context
         setUserName(mockedUser.username);
         setRole(mockedUser.role);
 
         // Redirect User
-        switch(mockedUser.role) {
+        switch (mockedUser.role) {
             case 'Student':
-                history.push('/student');
+                history.push(`/student/${mockedUser.username}`);
                 break;
             case 'Instructor':
-                history.push('instructor');
+                history.push(`instructor/${mockedUser.username}`);
                 break;
         }
     }, [history, setRole, setUserName, userNameInput]);
+    const onSignUpButtonClicked = useCallback(() => {
+        history.push(`/signup`);
+    }, [history]);
 
     return (
         <Container component="main" maxWidth="xs">
@@ -78,6 +81,14 @@ export default function PTLoginForm(): React.ReactElement {
                         variant="contained"
                     >
                         Log In
+                    </Button>
+                    <Button
+                        sx={styles.button}
+                        fullWidth
+                        variant="contained"
+                        onClick={onSignUpButtonClicked}
+                    >
+                        Don't have an account? Sign Up
                     </Button>
                 </Box>
             </Box>

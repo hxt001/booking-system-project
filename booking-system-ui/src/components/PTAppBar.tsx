@@ -21,15 +21,15 @@ export default function PTAppBar(): React.ReactElement {
     const onLoginButtonClick = useCallback(() => {
         switch (role) {
             case 'Instructor':
-                history.push('/instructor');
+                history.push(`/instructor/${username}`);
                 break;
             case 'Student':
-                history.push('/student');
+                history.push(`/student/${username}`);
                 break;
             default:
-                history.push('login');
+                history.push('/login');
         }
-    }, [history, role]);
+    }, [history, role, username]);
     const buttonText = username ?? 'Log in';
     
     return (

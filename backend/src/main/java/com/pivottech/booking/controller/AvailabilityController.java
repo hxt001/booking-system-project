@@ -6,6 +6,7 @@ import com.pivottech.booking.model.User;
 import com.pivottech.booking.service.BookingService;
 import com.pivottech.booking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,8 +28,8 @@ public class AvailabilityController {
     @GetMapping("")
     public Iterable<Availability> list(
             @PathVariable("username") String username,
-            @RequestParam(name = "from") LocalDateTime from,
-            @RequestParam(name = "to") LocalDateTime to
+            @RequestParam(name = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime from,
+            @RequestParam(name = "to") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime to
     ) {
         User user = userService.getUserByUsername(username);
         if (user == null || user.getInstructor() == null) {

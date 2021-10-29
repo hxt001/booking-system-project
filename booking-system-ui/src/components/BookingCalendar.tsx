@@ -1,36 +1,33 @@
-import { Calendar, Views, momentLocalizer } from 'react-big-calendar';
+import { Calendar, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import moment from 'moment';
 import { useCallback, useState } from 'react';
 import { Container, } from '@mui/material';
 import EventDetailsModal from './EventDeailsModal';
-import { Event } from './MyCalendar';
 import NewMeetingModal from './NewReservationModal';
+import useCalendar from '../hooks/useCalendar';
+import { Event } from '../utils/CalendarUtils';
+import ErrorModal from './ErrorModal';
 
 export default function BookingCalendar(): React.ReactElement {
-    const localizer = momentLocalizer(moment);
     const titleAccessor = useCallback(
         (e: Event) => e.title ?? 'Available',
         []
-      );
+    );
 
-    // Mocked Event
-    const now = new Date();
-    const anHourLater = new Date();
-    anHourLater.setHours(now.getHours() + 4);
-    const event: Event = {
-        start: now,
-        end: anHourLater,
-        type: 'Availability',
-    }
+    const {
+        localizer,
+        selectedReservation,
+        setSelectedReservation,
+        events,
+        setEvents,
+        error,
+        setError,
+        onDetailsModalClose,
+        onRangeChange,
+    } = useCalendar(true);
 
     const [selectedAvailability, setSelectedAvailability] = useState<Event | null>(null);
-    const [selectedReservation, setSelectedReservation] = useState<Event | null>(null);
-    const [events, setEvents] = useState<Array<Event>>([event]);
 
-    const onDetailsModalClose = useCallback(
-        () => { setSelectedReservation(null); }, []
-    );
     const onCreationModalClose = useCallback(
         () => { setSelectedAvailability(null); }, []
     );
@@ -41,14 +38,10 @@ export default function BookingCalendar(): React.ReactElement {
             } else {
                 setSelectedAvailability(event);
             }
-        }, []
+        }, [setSelectedReservation]
     );
-    const onNewReservationCreated = useCallback(
-        (newEvents: Array<Event>) => {
-            const oldEvents = events.filter(e => e !== selectedAvailability);
-            setEvents([...oldEvents, ...newEvents]);
-            setSelectedAvailability(null);
-        }, [events, selectedAvailability]
+    const onErrorModalClose = useCallback(
+        () => { setError(null); }, [setError]
     );
 
     return (
@@ -62,16 +55,22 @@ export default function BookingCalendar(): React.ReactElement {
                     view={Views.WEEK}
                     titleAccessor={titleAccessor}
                     onSelectEvent={onEventSelected}
+                    onRangeChange={onRangeChange}
                 />
             </Container>
             <EventDetailsModal
                 reservation={selectedReservation}
-                onClose={onDetailsModalClose} 
+                onClose={onDetailsModalClose}
+            />
+            <ErrorModal
+                errorMsg={error}
+                onClose={onErrorModalClose}
             />
             <NewMeetingModal
                 availability={selectedAvailability}
                 onClose={onCreationModalClose}
-                createNewreservation={onNewReservationCreated} 
+                setEvents={setEvents}
+                setError={setError}
             />
         </>
     );

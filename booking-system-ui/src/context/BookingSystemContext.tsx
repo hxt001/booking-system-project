@@ -1,13 +1,14 @@
 import * as React from "react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import BookingSystemRequest from "../utils/BookingSystemRequest";
 
 export type Role = 'Student' | 'Instructor';
 
 export interface BookingSystemContextInterface {
   username: string | null;
   role: Role | null;
-  setUserName: (username: string) => void;
-  setRole: (role: Role) => void;
+  setUserName: (username: string | null) => void;
+  setRole: (role: Role | null) => void;
 }
 
 const emptyFunction = () => { };
@@ -27,6 +28,31 @@ export function BookingSystemContextProvider({
 }: Props): React.ReactElement {
   const [username, setUserName] = useState<string | null>(null);
   const [role, setRole] = useState<Role | null>(null);
+
+  // Fetch user information from local storage
+  const onRequestSusccess = useCallback((response) => {
+    if (!Boolean(response)) {
+        return;
+    }
+    response = JSON.parse(response);
+
+    const username = response.username;
+    const role = response.instructor?.id != null ? 'Instructor' : 'Student';
+
+    setUserName(username);
+    setRole(role);
+}, [setRole, setUserName]);
+
+  useEffect(() => {
+    const userFromStorage = localStorage.getItem('username');
+    if (userFromStorage != null) {
+      new BookingSystemRequest(`users/${userFromStorage}`, 'GET')
+            .onSuccess(onRequestSusccess)
+            .send();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
   const initialValue: BookingSystemContextInterface = { username, role, setUserName, setRole };
 
   return (

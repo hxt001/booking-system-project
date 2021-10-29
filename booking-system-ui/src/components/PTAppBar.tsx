@@ -17,7 +17,7 @@ const styles = {
 
 export default function PTAppBar(): React.ReactElement {
     const history = useHistory();
-    const {username, role} = useContext(BookingSystemContext);
+    const { username, role, setUserName, setRole } = useContext(BookingSystemContext);
     const onLoginButtonClick = useCallback(() => {
         switch (role) {
             case 'Instructor':
@@ -30,16 +30,25 @@ export default function PTAppBar(): React.ReactElement {
                 history.push('/login');
         }
     }, [history, role, username]);
+    const onLogOutButtonClick = useCallback(() => {
+        localStorage.clear();
+        setUserName(null);
+        setRole(null);
+        history.push('/login');
+    }, [history, setRole, setUserName])
     const buttonText = username ?? 'Log in';
-    
+
     return (
         <AppBar>
             <Toolbar>
-                    <img src={iconImage} alt='Pivot Tech Logo' style={styles.iconImage} />
-                    <Typography variant="h6" component="div" sx={styles.nameText}>
-                        Pivot Tech Booking System
-                    </Typography>
+                <img src={iconImage} alt='Pivot Tech Logo' style={styles.iconImage} />
+                <Typography variant="h6" component="div" sx={styles.nameText}>
+                    Pivot Tech Booking System
+                </Typography>
                 <Button color="inherit" onClick={onLoginButtonClick}>{buttonText}</Button>
+                {Boolean(username) && (
+                    <Button color="inherit" onClick={onLogOutButtonClick}>Log Out</Button>
+                )}
             </Toolbar>
         </AppBar>
     )

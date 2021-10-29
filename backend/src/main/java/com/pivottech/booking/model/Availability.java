@@ -2,6 +2,7 @@ package com.pivottech.booking.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,9 +29,11 @@ public class Availability {
     Long id;
 
     @NotNull
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
     LocalDateTime utcStartTime;
 
     @NotNull
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
     LocalDateTime utcEndTime;
 
     @ManyToOne

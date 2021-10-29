@@ -1,9 +1,9 @@
-import { Avatar, Box, Button, Container, FormControl, InputLabel, MenuItem, Select, Tab, Tabs, TextField, Typography } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
-import { getUser } from '../mock/UserMock';
-import BookingSystemContext, { Role } from '../context/BookingSystemContext';
-import { useHistory } from 'react-router';
+import { Alert, Avatar, Box, Button, CircularProgress, Container, FormControl, InputLabel, MenuItem, Select, Tab, Tabs, TextField, Typography } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 import { AccountCircleOutlined } from '@mui/icons-material';
+import useAuthenticationForm from '../hooks/useAuthenticationForm';
+import BookingSystemRequest from '../utils/BookingSystemRequest';
+import { Role } from '../context/BookingSystemContext';
 
 const styles = {
     accountIcon: {
@@ -30,10 +30,10 @@ const styles = {
 }
 
 export default function PTSignUpForm(): React.ReactElement {
+    // Input states
     const [tab, setTab] = useState('Student');
-
     const [userNameInput, setUserNameInput] = useState('');
-    const [gradeInput, setGradeInput] = useState('1');
+    const [gradeInput, setGradeInput] = useState('Freshman');
     const [introduction, setIntroduction] = useState('');
 
     const onUserNameChange = useCallback((e) => {
@@ -49,25 +49,43 @@ export default function PTSignUpForm(): React.ReactElement {
         setIntroduction(e.target.value);
     }, []);
 
-    const { setUserName, setRole } = useContext(BookingSystemContext);
-    const history = useHistory();
-    const onSubmit = useCallback(() => {
-        const mockedUser = getUser(userNameInput);
+    // Request Handling
+    const {
+        isLoading,
+        errorMessage,
+        onRequestStart,
+        onErrorMsgClose,
+        onRequestFailed,
+        onRequestSuccess,
+    } = useAuthenticationForm(() => {
+        return {
+            username: userNameInput,
+            role: tab as Role,
+        };
+    });
 
-        // Setup Context
-        setUserName(mockedUser.username);
-        setRole(tab as Role);
+    const onUserCreationSuccess = useCallback(() => {
+        const isStudent = tab === 'Student';
+        const path = isStudent ? 'students' : 'instructors';
+        const payload = isStudent ? {grade: gradeInput} : {introduction: introduction}
+        new BookingSystemRequest(`${path}/${userNameInput}`, 'POST')
+            .setPayload(payload)
+            .onSuccess(onRequestSuccess)
+            .onFailure(onRequestFailed)
+            .onError(onRequestFailed)
+            .send();
+    }, [gradeInput, introduction, onRequestFailed, onRequestSuccess, tab, userNameInput]);
 
-        // Redirect User
-        switch (tab) {
-            case 'Student':
-                history.push(`/student/${mockedUser.username}`);
-                break;
-            case 'Instructor':
-                history.push(`instructor/${mockedUser.username}`);
-                break;
-        }
-    }, [history, setRole, setUserName, tab, userNameInput]);
+    const onSubmit = useCallback((e) => {
+        new BookingSystemRequest(`users`, 'POST')
+            .setPayload({ username: userNameInput })
+            .onStart(onRequestStart)
+            .onSuccess(onUserCreationSuccess)
+            .onFailure(onRequestFailed)
+            .onError(onRequestFailed)
+            .send();
+        e.preventDefault();
+    }, [onRequestFailed, onRequestStart, onUserCreationSuccess, userNameInput]);
 
     return (
         <Container component="main" maxWidth="xs">
@@ -83,6 +101,12 @@ export default function PTSignUpForm(): React.ReactElement {
                 <Typography sx={styles.title} component="h1" variant="h4">
                     Sign Up
                 </Typography>
+                {isLoading && <CircularProgress sx={{ mt: 2 }} />}
+                {errorMessage != null && (
+                    <Alert onClose={onErrorMsgClose} severity="error" sx={{ mt: 2 }}>
+                        {errorMessage}
+                    </Alert>
+                )}
                 <Box sx={styles.tabGroup}>
                     <Tabs value={tab} onChange={onTabChange}>
                         <Tab tabIndex={0} value='Student' label="Student" />
@@ -120,10 +144,10 @@ export default function PTSignUpForm(): React.ReactElement {
                                 value={gradeInput}
                                 onChange={onGradeChange}
                             >
-                                <MenuItem value={1}>Freshman</MenuItem>
-                                <MenuItem value={2}>Sophoremore</MenuItem>
-                                <MenuItem value={3}>Junior</MenuItem>
-                                <MenuItem value={4}>Senior</MenuItem>
+                                <MenuItem value={'Freshman'}>Freshman</MenuItem>
+                                <MenuItem value={'Sophoremore'}>Sophoremore</MenuItem>
+                                <MenuItem value={'Junior'}>Junior</MenuItem>
+                                <MenuItem value={'Senior'}>Senior</MenuItem>
                             </Select>
                         </FormControl>
                     )}

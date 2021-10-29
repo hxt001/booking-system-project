@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Event } from './MyCalendar';
+import { Event } from "../utils/CalendarUtils";
 
 interface Props {
     reservation: Event | null,

@@ -1,9 +1,10 @@
-import { Avatar, Box, Button, Container, TextField, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, CircularProgress, Container, TextField, Typography } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import React, { useCallback, useContext, useState } from 'react';
-import { getUser } from '../mock/UserMock';
-import BookingSystemContext from '../context/BookingSystemContext';
-import { useHistory } from 'react-router';
+import React, { useCallback, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import BookingSystemRequest from '../utils/BookingSystemRequest';
+import useAuthenticationForm from '../hooks/useAuthenticationForm';
+import { Role } from '../context/BookingSystemContext';
 
 const styles = {
     lockIcon: {
@@ -20,30 +21,48 @@ const styles = {
 }
 
 export default function PTLoginForm(): React.ReactElement {
+    // Input states
     const [userNameInput, setUserNameInput] = useState('');
     const onInputChange = useCallback((e) => {
         setUserNameInput(e.target.value);
     }, []);
 
-    const { setUserName, setRole } = useContext(BookingSystemContext);
-    const history = useHistory();
-    const onSubmit = useCallback(() => {
-        const mockedUser = getUser(userNameInput);
-
-        // Setup Context
-        setUserName(mockedUser.username);
-        setRole(mockedUser.role);
-
-        // Redirect User
-        switch (mockedUser.role) {
-            case 'Student':
-                history.push(`/student/${mockedUser.username}`);
-                break;
-            case 'Instructor':
-                history.push(`instructor/${mockedUser.username}`);
-                break;
+    const parseRequest = useCallback((response) => {
+        if (!Boolean(response)) {
+            return {
+                username: null,
+                role: null,
+            };
         }
-    }, [history, setRole, setUserName, userNameInput]);
+        const parsedResponse = JSON.parse(response);
+        return {
+            username: parsedResponse.username,
+            role: (parsedResponse.student?.id != null ? 'Student' : 'Instructor') as Role,
+        };
+    }, []);
+
+    // Request Handling
+    const {
+        isLoading,
+        errorMessage,
+        onRequestStart,
+        onErrorMsgClose,
+        onRequestFailed,
+        onRequestSuccess,
+    } = useAuthenticationForm(parseRequest);
+
+    const onSubmit = useCallback((e) => {
+        new BookingSystemRequest(`users/${userNameInput}`, 'GET')
+            .onStart(onRequestStart)
+            .onSuccess(onRequestSuccess)
+            .onFailure(onRequestFailed)
+            .onError(onRequestFailed)
+            .send();
+
+        e.preventDefault();
+    }, [onRequestFailed, onRequestStart, onRequestSuccess, userNameInput]);
+
+    const history = useHistory();
     const onSignUpButtonClicked = useCallback(() => {
         history.push(`/signup`);
     }, [history]);
@@ -62,6 +81,12 @@ export default function PTLoginForm(): React.ReactElement {
                 <Typography component="h1" variant="h4">
                     Log in
                 </Typography>
+                {isLoading && <CircularProgress sx={{ mt: 2 }} />}
+                {errorMessage != null && (
+                    <Alert onClose={onErrorMsgClose} severity="error" sx={{ mt: 2 }}>
+                        {errorMessage}
+                    </Alert>
+                )}
                 <Box component="form" onSubmit={onSubmit} sx={styles.form}>
                     <TextField
                         margin="normal"

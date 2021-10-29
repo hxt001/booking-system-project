@@ -1,98 +1,71 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
+import { useCallback, useContext, useState } from "react";
 import { useParams } from "react-router";
 import BookingSystemContext from "../context/BookingSystemContext";
+import BookingSystemRequest from "../utils/BookingSystemRequest";
+import { Event, reservationToEvents } from "../utils/CalendarUtils";
 import { RouteParams } from "../views/InstructorView";
-import { Event } from './MyCalendar';
 
 interface Props {
     availability: Event | null,
     onClose: () => void,
-    createNewreservation: (newEvents: Array<Event>) => void,
+    setEvents: (cb: (events: Event[]) => Event[]) => void,
+    setError: (err: string) => void,
 }
 
 export default function NewReservationModal({
     availability,
     onClose,
-    createNewreservation,
+    setEvents,
+    setError,
 }: Props): React.ReactElement {
-    const [start, setStart] = useState(availability?.start);
-    const [end, setEnd] = useState(availability?.end);
     const [title, setTitle] = useState('');
-    const { username: instructorUserName } = useParams<RouteParams>();
-    const { username: studentUserName } = useContext(BookingSystemContext);
-
     const onTitleChange = useCallback((e) => {
         setTitle(e.target.value);
     }, []);
-    const onStartChange = useCallback((e) => {
-        setStart(new Date(e.target.value));
-    }, []);
-    const onEndChange = useCallback((e) => {
-        setEnd(new Date(e.target.value));
-    }, []);
+
+    const { username: instructorUserName } = useParams<RouteParams>();
+    const { username: studentUserName } = useContext(BookingSystemContext);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const onReequestFail = useCallback(() => {
+        setIsLoading(false);
+        setError('There has been an error creating your reservation');
+        onClose();
+    }, [onClose, setError]);
+
+    const onReequestSuccess = useCallback((res) => {
+        setIsLoading(false);
+        
+        if (!Boolean(res)) {
+            setError('There has been an error creating your reservation');
+        } else {
+            const parsedRes = JSON.parse(res);
+            setEvents((events) => {
+                const filteredEvents = events.filter((e) => e.id !== availability?.id);
+                return [
+                    ...filteredEvents,
+                    ...reservationToEvents([parsedRes])
+                ]
+            });
+        }
+        onClose();
+        
+    }, [availability?.id, onClose, setError, setEvents]);
 
 
     const onSubmit = useCallback(() => {
-        if (availability != null && start != null && end != null) {
-            const newEvents: Array<Event> = [];
-            if (start > availability?.start) {
-                newEvents.push({
-                    start: availability.start,
-                    end: start,
-                    type: 'Availability',
-                });
-            }
-            if (end < availability?.end) {
-                newEvents.push({
-                    start: end,
-                    end: availability.end,
-                    type: 'Availability',
-                });
-            }
-            newEvents.push({
-                start: start,
-                end: end,
-                type: 'Reservation',
-                title: title,
-                instructor: instructorUserName,
-                student: studentUserName ?? 'Visitor',
-            });
-            createNewreservation(newEvents);
-        }
-    }, [availability, createNewreservation, end, instructorUserName, start, studentUserName, title]);
-
-    const startOptions = useMemo(
-        () => {
-            if (availability?.start == null || availability?.end == null) {
-                return [];
-            }
-            let current = new Date(availability.start);
-            const result = [];
-            while (current < availability.end) {
-                result.push(current);
-                current = new Date(current.getTime() + 30 * 60000);
-            }
-            return result;
-        },
-        [availability?.end, availability?.start]
-    );
-
-    const endOptions = useMemo(
-        () => {
-            if (start == null || availability?.end == null) {
-                return [];
-            }
-            let current = new Date(start.getTime() + 30 * 60000);
-            const result = [];
-            while (current <= availability?.end) {
-                result.push(current);
-                current = new Date(current.getTime() + 30 * 60000);
-            }
-            return result;
-        },
-        [availability?.end, start]
-    );
+        setIsLoading(true);
+        new BookingSystemRequest(`${studentUserName}/reservations`, 'POST')
+            .setPayload({
+                availabilityId: availability?.id,
+                description: title,
+            })
+            .onSuccess(onReequestSuccess)
+            .onFailure(onReequestFail)
+            .onError(onReequestFail)
+            .send();
+    }, [availability, onReequestFail, onReequestSuccess, studentUserName, title]);
 
     return (
         <Dialog fullWidth maxWidth='sm' open={availability != null} onClose={onClose}>
@@ -107,46 +80,24 @@ export default function NewReservationModal({
                     variant="standard"
                     onChange={onTitleChange}
                 />
-                <FormControl sx={{ mt: 2, mr: 2, minWidth: 100 }}>
-                    <InputLabel htmlFor="start">From</InputLabel>
-                    <Select
-                        value={start}
-                        onChange={onStartChange}
-                        label="From"
-                    >
-                        {startOptions.map((date: Date) => (
-                            <MenuItem value={date.toISOString()}>
-                                {date.toLocaleTimeString()}
-                            </MenuItem>
-                        ))}
-                    </Select>
-
-                </FormControl>
-                <FormControl sx={{ mt: 2 , minWidth: 100}}><InputLabel htmlFor="end">To</InputLabel>
-                    <Select
-                        value={end}
-                        onChange={onEndChange}
-                        label="end"
-                    >
-                        {endOptions.map((date: Date) => (
-                            <MenuItem value={date.toISOString()}>
-                                {date.toLocaleTimeString()}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                <DialogContentText sx={{mt: 2}}>
+                    From: {availability?.start.toLocaleString()}
+                </DialogContentText>
+                <DialogContentText sx={{mt: 1}}>
+                    To: {availability?.end.toLocaleString()}
+                </DialogContentText>
                 <DialogContentText sx={{mt: 2}}>
                     Student: {studentUserName}
                 </DialogContentText>
-                <DialogContentText>
+                <DialogContentText sx={{mt: 1}}>
                     Instructor: {instructorUserName}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button autoFocus onClick={onClose}>
+                <Button disabled={isLoading} onClick={onClose}>
                     Cancel
                 </Button>
-                <Button onClick={onSubmit}>
+                <Button disabled={isLoading} onClick={onSubmit}>
                     OK
                 </Button>
             </DialogActions>

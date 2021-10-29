@@ -1,5 +1,7 @@
 package com.pivottech.booking.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -18,7 +20,7 @@ public class Instructor {
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "user_id")
     @MapsId
-    @JsonManagedReference("user-instructor")
+    @JsonBackReference("user-instructor")
     User user;
 
     String introduction;

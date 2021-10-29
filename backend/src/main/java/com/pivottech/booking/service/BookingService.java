@@ -49,8 +49,13 @@ public class BookingService {
 //        return true;
 //    }
 
-    public List<Reservation> getReservationsBetween(Student student, LocalDateTime from, LocalDateTime to) {
+    public List<Reservation> getStudentReservationsBetween(Student student, LocalDateTime from, LocalDateTime to) {
         List<Reservation> results = reservationRepository.findByUsernameAndBetween(student.getId(), from, to);
+        return results;
+    }
+
+    public List<Reservation> getInstructorReservationsBetween(Instructor instructor, LocalDateTime from, LocalDateTime to) {
+        List<Reservation> results = reservationRepository.findByInstructorAndBetween(instructor.getId(), from, to);
         return results;
     }
 

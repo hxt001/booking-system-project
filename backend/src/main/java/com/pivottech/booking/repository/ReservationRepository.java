@@ -19,4 +19,14 @@ public interface ReservationRepository extends PagingAndSortingRepository<Reserv
             @Param("from") LocalDateTime from,
             @Param("to") LocalDateTime to
     );
+
+    @Query(
+            value = "SELECT DISTINCT a.reservation from Availability a WHERE a.instructor.id = :instructor_id AND " +
+                    "a.reservation.utcStartTime >= :from AND a.reservation.utcEndTime < :to"
+    )
+    List<Reservation> findByInstructorAndBetween(
+            @Param("instructor_id") Long instructor,
+            @Param("from") LocalDateTime from,
+            @Param("to") LocalDateTime to
+    );
 }

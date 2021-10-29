@@ -1,6 +1,7 @@
 package com.pivottech.booking.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,10 +23,10 @@ public class User {
     String username;
 
     @OneToOne(mappedBy = "user")
-    @JsonBackReference("user-instructor")
+    @JsonManagedReference("user-instructor")
     Instructor instructor;
 
     @OneToOne(mappedBy = "user")
-    @JsonBackReference("user-student")
+    @JsonManagedReference("user-student")
     Student student;
 }

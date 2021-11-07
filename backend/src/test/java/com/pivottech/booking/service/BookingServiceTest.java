@@ -50,11 +50,11 @@ class BookingServiceTest {
 //        verify(mockReservationRepository).save(toBeCreated);
     }
 
-    @Test
-    void deleteReservation() {
-        service.deleteReservation(mockReservation.getId());
-        verify(mockReservationRepository).delete(mockReservation);
-    }
+//    @Test
+//    void deleteReservation() {
+//        service.deleteReservation(mockReservation.getId());
+//        verify(mockReservationRepository).delete(mockReservation);
+//    }
 
     @Test
     void getReservations() {

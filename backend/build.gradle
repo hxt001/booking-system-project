@@ -8,6 +8,16 @@ group = 'com.pivottech'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+springBoot {
+	mainClass = 'com.pivottech.booking.BookingApplication'
+}
+
+bootJar {
+	manifest {
+		attributes 'Start-Class': 'com.pivottech.booking.BookingApplication'
+	}
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor

@@ -6,3 +6,5 @@ WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 # Copy static assets over
 ADD build ./
+# Copy nginx configuration
+COPY production/nginx.default.conf /etc/nginx/conf.d/default.conf

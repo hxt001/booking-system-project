@@ -30,7 +30,12 @@ jobs:
       - name: Set up docker
         uses: docker-practice/actions-setup-docker@master
       
-      - name: Build backend with Gradle
+      - name: Test backend
+        run: |
+          cd backend
+          ./gradlew test
+
+      - name: Build backend image
         run: |
           cd backend
           ./gradlew bootJar
@@ -41,7 +46,7 @@ jobs:
         with:
           node-version: 'lts/erbium'
       
-      - name: Build frontend with NPM
+      - name: Build frontend image
         run: |
           cd booking-system-ui
           npm install

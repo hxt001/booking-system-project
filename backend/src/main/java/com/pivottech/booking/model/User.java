@@ -9,7 +9,8 @@ import javax.validation.constraints.NotEmpty;
 
 @Entity(name = "User")
 @Data
-@Table(indexes = {
+@Table(name = "\"user\"",
+        indexes = {
         @Index(name = "username_index", columnList = "username", unique = true)
 })
 public class User {

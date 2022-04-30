@@ -9,11 +9,12 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity(name = "Instructor")
 @Data
 @ToString(exclude = { "user" })
-public class Instructor {
+public class Instructor implements Serializable {
 
 	@Id
 	@Setter(AccessLevel.NONE)

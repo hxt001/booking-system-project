@@ -7,6 +7,7 @@ import com.pivottech.booking.model.User;
 import com.pivottech.booking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -53,6 +54,11 @@ public class UserController {
 	@GetMapping("login")
 	public String login() {
 		return "Please login";
+	}
+
+	@GetMapping("users/current")
+	public String currentUser(@AuthenticationPrincipal User user) {
+		return user.getUsername();
 	}
 
 }

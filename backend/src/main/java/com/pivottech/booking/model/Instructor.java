@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity(name = "Instructor")
 @Data
+@ToString(exclude = { "user" })
 public class Instructor {
 
 	@Id

@@ -9,6 +9,7 @@ import com.pivottech.booking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,6 +35,7 @@ public class ReservationController {
 	}
 
 	@GetMapping("")
+	@PreAuthorize("#username == authentication.principal.username")
 	public List<Reservation> list(@PathVariable("username") final String username,
 			@RequestParam(name = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime from,
 			@RequestParam(name = "to") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime to) {

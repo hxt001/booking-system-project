@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -37,6 +38,7 @@ public class AvailabilityController {
 	}
 
 	@PostMapping("")
+	@RolesAllowed({ "Instructor" })
 	public Iterable<Availability> create(@PathVariable("username") String username,
 			@Valid @RequestBody CreateAvailabilityRequest request) {
 		User user = userService.getUserByUsername(username);

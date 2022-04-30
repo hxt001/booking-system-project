@@ -1,4 +1,4 @@
-package com.pivottech.booking.controller;
+package com.pivottech.booking.handler;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

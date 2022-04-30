@@ -3,6 +3,7 @@ package com.pivottech.booking;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.pivottech.booking.handler.LoginSuccessHandler;
 import com.pivottech.booking.intercepter.LogIntercepter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,7 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class BookingApplication {
 
 	@Service
-	public static class CustomObjectMapper extends ObjectMapper {
+	public class CustomObjectMapper extends ObjectMapper {
 
 		public CustomObjectMapper() {
 			this.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -36,7 +37,7 @@ public class BookingApplication {
 	}
 
 	@Configuration
-	public static class WebMVCConfig implements WebMvcConfigurer {
+	public class WebMVCConfig implements WebMvcConfigurer {
 
 		@Override
 		public void addInterceptors(InterceptorRegistry registry) {
@@ -48,7 +49,8 @@ public class BookingApplication {
 
 	@Configuration
 	@EnableWebSecurity
-	public static class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+	public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
@@ -64,6 +66,7 @@ public class BookingApplication {
 					.and()
 				.formLogin()
 					.loginPage("/login").permitAll()
+					.successHandler(loginSuccessHandler())
 					.and()
 				.logout().permitAll();
 			// @formatter:on
@@ -79,6 +82,11 @@ public class BookingApplication {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public LoginSuccessHandler loginSuccessHandler() {
+		return new LoginSuccessHandler();
 	}
 
 	public static void main(String[] args) {

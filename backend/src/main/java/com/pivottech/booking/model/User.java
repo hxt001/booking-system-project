@@ -1,9 +1,9 @@
 package com.pivottech.booking.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Entity(name = "User")
 @Data
+@ToString(exclude = { "password" })
+@Entity(name = "User")
 @Table(name = "\"user\"", indexes = { @Index(name = "username_index", columnList = "username", unique = true) })
 public class User implements UserDetails {
 
@@ -43,10 +44,10 @@ public class User implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		if (this.instructor != null) {
-			authorities.add(new SimpleGrantedAuthority("Instructor"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_Instructor"));
 		}
 		if (this.student != null) {
-			authorities.add(new SimpleGrantedAuthority("Student"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_Instructor"));
 		}
 		return authorities;
 	}

@@ -9,11 +9,11 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MakeReservationRequest {
 
-    @NotNull
-    @Min(0)
-    Long availabilityId;
+	@NotNull
+	@Min(0)
+	Long availabilityId;
 
-    @NotEmpty
-    String description;
+	@NotEmpty
+	String description;
 
 }

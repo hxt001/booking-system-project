@@ -19,48 +19,53 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @ControllerAdvice
 public class MethodArgumentNotValidExceptionHandler {
 
-    @ResponseStatus(BAD_REQUEST)
-    @ResponseBody
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Error methodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        BindingResult result = ex.getBindingResult();
-        List<org.springframework.validation.FieldError> fieldErrors = result.getFieldErrors();
-        return processFieldErrors(fieldErrors);
-    }
+	@ResponseStatus(BAD_REQUEST)
+	@ResponseBody
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public Error methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		BindingResult result = ex.getBindingResult();
+		List<org.springframework.validation.FieldError> fieldErrors = result.getFieldErrors();
+		return processFieldErrors(fieldErrors);
+	}
 
-    private Error processFieldErrors(List<org.springframework.validation.FieldError> fieldErrors) {
-        Error error = new Error(BAD_REQUEST.value(), "validation error");
-        for (org.springframework.validation.FieldError fieldError: fieldErrors) {
-            error.addFieldError(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
-        }
-        return error;
-    }
+	private Error processFieldErrors(List<org.springframework.validation.FieldError> fieldErrors) {
+		Error error = new Error(BAD_REQUEST.value(), "validation error");
+		for (org.springframework.validation.FieldError fieldError : fieldErrors) {
+			error.addFieldError(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
+		}
+		return error;
+	}
 
-    static class Error {
-        private final int status;
-        private final String message;
-        private List<FieldError> fieldErrors = new ArrayList<>();
+	static class Error {
 
-        Error(int status, String message) {
-            this.status = status;
-            this.message = message;
-        }
+		private final int status;
 
-        public int getStatus() {
-            return status;
-        }
+		private final String message;
 
-        public String getMessage() {
-            return message;
-        }
+		private List<FieldError> fieldErrors = new ArrayList<>();
 
-        public void addFieldError(String objectName, String path, String message) {
-            FieldError error = new FieldError(objectName, path, message);
-            fieldErrors.add(error);
-        }
+		Error(int status, String message) {
+			this.status = status;
+			this.message = message;
+		}
 
-        public List<FieldError> getFieldErrors() {
-            return fieldErrors;
-        }
-    }
+		public int getStatus() {
+			return status;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+		public void addFieldError(String objectName, String path, String message) {
+			FieldError error = new FieldError(objectName, path, message);
+			fieldErrors.add(error);
+		}
+
+		public List<FieldError> getFieldErrors() {
+			return fieldErrors;
+		}
+
+	}
+
 }

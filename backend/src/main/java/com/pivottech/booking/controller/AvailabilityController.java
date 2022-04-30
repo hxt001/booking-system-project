@@ -19,40 +19,37 @@ import java.time.LocalDateTime;
 @RequestMapping("{username}/availabilities")
 public class AvailabilityController {
 
-    @Autowired
-    BookingService bookingService;
+	@Autowired
+	BookingService bookingService;
 
-    @Autowired
-    UserService userService;
+	@Autowired
+	UserService userService;
 
-    @GetMapping("")
-    public Iterable<Availability> list(
-            @PathVariable("username") String username,
-            @RequestParam(name = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime from,
-            @RequestParam(name = "to") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime to
-    ) {
-        User user = userService.getUserByUsername(username);
-        if (user == null || user.getInstructor() == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "instructor doesn't exist");
-        }
-        return bookingService.findAvailabilitiesBetween(user.getInstructor(), from, to);
-    }
+	@GetMapping("")
+	public Iterable<Availability> list(@PathVariable("username") String username,
+			@RequestParam(name = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime from,
+			@RequestParam(name = "to") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime to) {
+		User user = userService.getUserByUsername(username);
+		if (user == null || user.getInstructor() == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "instructor doesn't exist");
+		}
+		return bookingService.findAvailabilitiesBetween(user.getInstructor(), from, to);
+	}
 
-    @PostMapping("")
-    public Iterable<Availability> create(
-            @PathVariable("username") String username,
-            @Valid @RequestBody CreateAvailabilityRequest request
-    ) {
-        User user = userService.getUserByUsername(username);
-        if (user == null || user.getInstructor() == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "instructor doesn't exist");
-        }
-        LocalDateTime from = request.getFromUtc();
-        LocalDateTime to = request.getToUtc();
-        if (from.isAfter(to)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "from must be earlier than to");
-        }
-        Duration duration = Duration.ofMinutes(request.getDurationMinutes());
-        return bookingService.createAvailability(user.getInstructor(), from, to, duration);
-    }
+	@PostMapping("")
+	public Iterable<Availability> create(@PathVariable("username") String username,
+			@Valid @RequestBody CreateAvailabilityRequest request) {
+		User user = userService.getUserByUsername(username);
+		if (user == null || user.getInstructor() == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "instructor doesn't exist");
+		}
+		LocalDateTime from = request.getFromUtc();
+		LocalDateTime to = request.getToUtc();
+		if (from.isAfter(to)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "from must be earlier than to");
+		}
+		Duration duration = Duration.ofMinutes(request.getDurationMinutes());
+		return bookingService.createAvailability(user.getInstructor(), from, to, duration);
+	}
+
 }

@@ -13,16 +13,16 @@ import javax.persistence.*;
 @Data
 public class Student {
 
-    @Id
-    @Setter(AccessLevel.NONE)
-    Long id;
+	@Id
+	@Setter(AccessLevel.NONE)
+	Long id;
 
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "user_id")
-    @MapsId
-    @JsonBackReference("user-student")
-    User user;
+	@OneToOne(cascade = { CascadeType.ALL })
+	@JoinColumn(name = "user_id")
+	@MapsId
+	@JsonBackReference("user-student")
+	User user;
 
-    String grade;
+	String grade;
+
 }
-

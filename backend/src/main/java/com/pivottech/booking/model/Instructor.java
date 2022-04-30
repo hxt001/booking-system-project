@@ -13,15 +13,16 @@ import javax.persistence.*;
 @Data
 public class Instructor {
 
-    @Id
-    @Setter(AccessLevel.NONE)
-    Long id;
+	@Id
+	@Setter(AccessLevel.NONE)
+	Long id;
 
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "user_id")
-    @MapsId
-    @JsonBackReference("user-instructor")
-    User user;
+	@OneToOne(cascade = { CascadeType.ALL })
+	@JoinColumn(name = "user_id")
+	@MapsId
+	@JsonBackReference("user-instructor")
+	User user;
 
-    String introduction;
+	String introduction;
+
 }

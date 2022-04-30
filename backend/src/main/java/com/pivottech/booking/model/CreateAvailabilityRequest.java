@@ -14,21 +14,21 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class CreateAvailabilityRequest {
 
-    @NotNull
-    @Future
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    LocalDateTime fromUtc;
+	@NotNull
+	@Future
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+	LocalDateTime fromUtc;
 
-    @NotNull
-    @Future
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    LocalDateTime toUtc;
+	@NotNull
+	@Future
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+	LocalDateTime toUtc;
 
-    @NotNull
-    @Min(0)
-    @Max(120)
-    Integer durationMinutes;
+	@NotNull
+	@Min(0)
+	@Max(120)
+	Integer durationMinutes;
 
 }

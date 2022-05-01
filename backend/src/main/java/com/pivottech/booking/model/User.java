@@ -47,7 +47,7 @@ public class User implements UserDetails {
 			authorities.add(new SimpleGrantedAuthority("ROLE_Instructor"));
 		}
 		if (this.student != null) {
-			authorities.add(new SimpleGrantedAuthority("ROLE_Instructor"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_Student"));
 		}
 		return authorities;
 	}

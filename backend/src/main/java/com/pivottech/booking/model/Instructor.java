@@ -1,12 +1,7 @@
 package com.pivottech.booking.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +9,7 @@ import java.io.Serializable;
 @Entity(name = "Instructor")
 @Data
 @ToString(exclude = { "user" })
+@EqualsAndHashCode(exclude = { "user" })
 public class Instructor implements Serializable {
 
 	@Id

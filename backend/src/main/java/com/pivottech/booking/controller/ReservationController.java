@@ -62,6 +62,7 @@ public class ReservationController {
 	}
 
 	@PostMapping("")
+	@PreAuthorize("#username == authentication.principal.username")
 	public Reservation create(@PathVariable("username") final String username,
 			@Valid @RequestBody final MakeReservationRequest request) {
 		final User user = userService.getUserByUsername(username);
@@ -76,12 +77,5 @@ public class ReservationController {
 				request.getDescription());
 		return saved;
 	}
-
-	// @DeleteMapping("/{id}")
-	// public void delete(@PathVariable("id") long id) {
-	// if (!this.bookingService.deleteReservation(id)) {
-	// throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-	// }
-	// }
 
 }

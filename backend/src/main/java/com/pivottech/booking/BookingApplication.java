@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pivottech.booking.handler.LoginSuccessHandler;
-import com.pivottech.booking.intercepter.LogIntercepter;
+import com.pivottech.booking.intercepter.LogInterceptor;
+import com.pivottech.booking.intercepter.TodaysDateArgumentResolver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -20,8 +21,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @SpringBootApplication
 public class BookingApplication {
@@ -41,8 +45,14 @@ public class BookingApplication {
 
 		@Override
 		public void addInterceptors(InterceptorRegistry registry) {
-			registry.addInterceptor(new LogIntercepter());
+			registry.addInterceptor(new LogInterceptor());
 			WebMvcConfigurer.super.addInterceptors(registry);
+		}
+
+		@Override
+		public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+			resolvers.add(new TodaysDateArgumentResolver());
+			WebMvcConfigurer.super.addArgumentResolvers(resolvers);
 		}
 
 	}

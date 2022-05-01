@@ -42,7 +42,12 @@ public class UserController {
 
 	@PostMapping("instructors/{username}")
 	public Instructor createOrUpdateInstructor(@PathVariable("username") String username,
-			@RequestBody Instructor instructor) {
+			@RequestBody Instructor instructor, @AuthenticationPrincipal User currentUser) {
+
+		if (currentUser.getUsername() != username) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "xxxx");
+		}
+
 		User user = userService.getUserByUsername(username);
 		if (user == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "username doesn't exist.");
@@ -52,6 +57,7 @@ public class UserController {
 	}
 
 	@GetMapping("login")
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public String login() {
 		return "Please login";
 	}

@@ -1,7 +1,7 @@
 type Method = 'GET' | 'POST';
 
 export default class BookingSystemRequest {
-    domain: string = 'http://localhost:8081';
+    base: string = '/api';
     path: string;
     request: XMLHttpRequest;
     payload: any | undefined;
@@ -54,7 +54,7 @@ export default class BookingSystemRequest {
     }
 
     send() {
-        this.request.open(this.method, `${this.domain}/${this.path}`);
+        this.request.open(this.method, `${this.base}/${this.path}`);
         this.request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         this.request.addEventListener('loadend', this.onFinished());
         this.request.send(this.payload);

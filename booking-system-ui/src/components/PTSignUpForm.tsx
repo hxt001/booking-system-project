@@ -33,11 +33,15 @@ export default function PTSignUpForm(): React.ReactElement {
     // Input states
     const [tab, setTab] = useState('Student');
     const [userNameInput, setUserNameInput] = useState('');
+    const [passwordInput, setPasswordInput] = useState('');
     const [gradeInput, setGradeInput] = useState('Freshman');
     const [introduction, setIntroduction] = useState('');
 
     const onUserNameChange = useCallback((e) => {
         setUserNameInput(e.target.value);
+    }, []);
+    const onPasswordChange = useCallback((e) => {
+        setPasswordInput(e.target.value);
     }, []);
     const onTabChange = useCallback((_, newValue) => {
         setTab(newValue);
@@ -64,7 +68,7 @@ export default function PTSignUpForm(): React.ReactElement {
         };
     });
 
-    const onUserCreationSuccess = useCallback(() => {
+    const onLoginSuccess = useCallback(() => {
         const isStudent = tab === 'Student';
         const path = isStudent ? 'students' : 'instructors';
         const payload = isStudent ? {grade: gradeInput} : {introduction: introduction}
@@ -76,16 +80,25 @@ export default function PTSignUpForm(): React.ReactElement {
             .send();
     }, [gradeInput, introduction, onRequestFailed, onRequestSuccess, tab, userNameInput]);
 
+    const onUserCreationSuccess = useCallback(() => {
+        new BookingSystemRequest(`login?username=${userNameInput}&password=${passwordInput}`, 'POST', true)
+            .onStart(onRequestStart)
+            .onSuccess(onLoginSuccess)
+            .onFailure(onRequestFailed)
+            .onError(onRequestFailed)
+            .send();
+    }, [onRequestStart, onRequestFailed, onLoginSuccess, userNameInput, passwordInput]);
+
     const onSubmit = useCallback((e) => {
         new BookingSystemRequest(`users`, 'POST')
-            .setPayload({ username: userNameInput })
+            .setPayload({ username: userNameInput, password: passwordInput })
             .onStart(onRequestStart)
             .onSuccess(onUserCreationSuccess)
             .onFailure(onRequestFailed)
             .onError(onRequestFailed)
             .send();
         e.preventDefault();
-    }, [onRequestFailed, onRequestStart, onUserCreationSuccess, userNameInput]);
+    }, [onRequestFailed, onRequestStart, onUserCreationSuccess, userNameInput, passwordInput]);
 
     return (
         <Container component="main" maxWidth="xs">
@@ -123,6 +136,18 @@ export default function PTSignUpForm(): React.ReactElement {
                         name="username"
                         autoComplete="username"
                         onChange={onUserNameChange}
+                        autoFocus
+                    />
+                    <TextField
+                        margin="normal"
+                        fullWidth
+                        required
+                        id="password"
+                        label="Password"
+                        name="password"
+                        autoComplete="password"
+                        onChange={onPasswordChange}
+                        type="password"
                         autoFocus
                     />
                     {tab === 'Instructor' && (<TextField

@@ -23,8 +23,13 @@ const styles = {
 export default function PTLoginForm(): React.ReactElement {
     // Input states
     const [userNameInput, setUserNameInput] = useState('');
-    const onInputChange = useCallback((e) => {
+    const [passwordInput, setPasswordInput] = useState('');
+    const onUserNameChange = useCallback((e) => {
         setUserNameInput(e.target.value);
+    }, []);
+
+    const onPasswordChange = useCallback((e) => {
+        setPasswordInput(e.target.value);
     }, []);
 
     const parseRequest = useCallback((response) => {
@@ -51,16 +56,24 @@ export default function PTLoginForm(): React.ReactElement {
         onRequestSuccess,
     } = useAuthenticationForm(parseRequest);
 
-    const onSubmit = useCallback((e) => {
+    const onLoginSuccess = useCallback(() => {
         new BookingSystemRequest(`users/${userNameInput}`, 'GET')
-            .onStart(onRequestStart)
             .onSuccess(onRequestSuccess)
+            .onFailure(onRequestFailed)
+            .onError(onRequestFailed)
+            .send();
+    }, [onRequestFailed, onRequestSuccess, userNameInput]);
+
+    const onSubmit = useCallback((e) => {
+        new BookingSystemRequest(`login?username=${userNameInput}&password=${passwordInput}`, 'POST', true)
+            .onStart(onRequestStart)
+            .onSuccess(onLoginSuccess)
             .onFailure(onRequestFailed)
             .onError(onRequestFailed)
             .send();
 
         e.preventDefault();
-    }, [onRequestFailed, onRequestStart, onRequestSuccess, userNameInput]);
+    }, [onRequestFailed, onRequestStart, onLoginSuccess, userNameInput, passwordInput]);
 
     const history = useHistory();
     const onSignUpButtonClicked = useCallback(() => {
@@ -96,7 +109,19 @@ export default function PTLoginForm(): React.ReactElement {
                         label="User Name"
                         name="username"
                         autoComplete="username"
-                        onChange={onInputChange}
+                        onChange={onUserNameChange}
+                        autoFocus
+                    />
+                    <TextField
+                        margin="normal"
+                        fullWidth
+                        required
+                        id="password"
+                        label="Password"
+                        name="password"
+                        autoComplete="password"
+                        type="password"
+                        onChange={onPasswordChange}
                         autoFocus
                     />
                     <Button

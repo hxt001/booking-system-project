@@ -44,7 +44,7 @@ public class UserController {
 	public Instructor createOrUpdateInstructor(@PathVariable("username") String username,
 			@RequestBody Instructor instructor, @AuthenticationPrincipal User currentUser) {
 
-		if (currentUser.getUsername() != username) {
+		if (!currentUser.getUsername().equals(username)) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "xxxx");
 		}
 

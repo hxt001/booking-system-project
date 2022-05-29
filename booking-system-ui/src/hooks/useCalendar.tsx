@@ -1,7 +1,8 @@
 import moment from "moment";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { DateLocalizer, momentLocalizer } from "react-big-calendar";
 import { useParams } from "react-router";
+import BookingSystemContext from "../context/BookingSystemContext";
 import BookingSystemRequest from "../utils/BookingSystemRequest";
 import { availabilityToEvents, DATE_FORMAT, Event, EventType, reservationToEvents } from '../utils/CalendarUtils';
 import { RouteParams } from "../views/InstructorView";
@@ -30,6 +31,8 @@ export default function useCalendar(includeAvailability: boolean): CalendarState
 
     const { username: routeUsername } = useParams<RouteParams>();
 
+    const {username: viewerUserName} = useContext(BookingSystemContext);
+
     const [rangeStart, setRangeStart] = useState(moment().startOf('week').toDate());
     const [rangeEnd, setRangeEnd] = useState(moment().endOf('week').toDate());
     const rangeStartString = moment(rangeStart).format(DATE_FORMAT);
@@ -48,7 +51,7 @@ export default function useCalendar(includeAvailability: boolean): CalendarState
         };
         
         setEvents([]);
-        const reservationPath = `${routeUsername}/reservations?from=${rangeStartString}&to=${rangeEndString}`
+        const reservationPath = `${viewerUserName}/reservations?from=${rangeStartString}&to=${rangeEndString}`
         new BookingSystemRequest(reservationPath, 'GET')
             .onSuccess(onFetchSuccess('Reservation'))
             .onFailure(() => setError('There has been an error getting reservations'))

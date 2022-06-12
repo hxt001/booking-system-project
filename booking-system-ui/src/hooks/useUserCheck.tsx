@@ -17,6 +17,7 @@ export default function useUserCheck (
             .onSuccess((res: string) => {
                 if (!Boolean(res)) {
                     history.push('/');
+                    return;
                 }
                 const parsedRes = JSON.parse(res);
                 if (notFound(parsedRes)) {

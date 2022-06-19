@@ -5,7 +5,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - http:
+    - host: 34.168.13.234.nip.io
+      http:
         paths:
           - path: /api
             pathType: Prefix
@@ -14,7 +15,8 @@ spec:
                 name: booking-backend-service
                 port: 
                   number: 80
-    - http:
+    - host: 34.168.13.234.nip.io
+      http:
         paths:
           - path: /
             pathType: Prefix

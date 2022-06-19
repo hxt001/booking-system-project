@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-backend
+  labels:
+    app: booking-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: booking-backend
+  template:
+    metadata:
+      labels:
+        app: booking-backend
+    spec:
+      containers:
+      - name: backend
+        image: us-west1-docker.pkg.dev/pivot-lab-2203/docker-image-repo/booking-backend:latest
+        ports:
+        - name: http
+          containerPort: 8081
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        env:
+          - name: POSTGRESQL_HOST
+            value: postgres
+          - name: POSTGRESQL_USER
+            value: postgres
+          - name: POSTGRESQL_PWD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-pass
+                key: value

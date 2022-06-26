@@ -28,6 +28,12 @@ spec:
           limits:
             memory: "1Gi"
             cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /api/
+            port: 8081
+          initialDelaySeconds: 3
+          periodSeconds: 3
         env:
           - name: POSTGRESQL_HOST
             value: postgres

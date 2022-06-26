@@ -86,7 +86,7 @@ jobs:
           push: true
           tags:  ${{ env.DOCKER_REGISTRY }}/booking-frontend:latest
 
-  update-image:
+  rollout-image:
     runs-on: ubuntu-latest
     needs: build-and-push
     steps:
@@ -109,9 +109,9 @@ jobs:
       - name: Deploy
         run: |-
           kubectl rollout restart deployment booking-backend
-          kubectl rollout statusdeployment booking-backend
+          kubectl rollout status deployment booking-backend
           kubectl rollout restart deployment booking-frontend
-          kubectl rollout statusdeployment booking-frontend
+          kubectl rollout status deployment booking-frontend
 
 
 

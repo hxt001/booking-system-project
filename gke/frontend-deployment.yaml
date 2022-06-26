@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-frontend
+  labels:
+    app: booking-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: booking-frontend
+  template:
+    metadata:
+      labels:
+        app: booking-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: us-west1-docker.pkg.dev/pivot-lab-2203/docker-image-repo/booking-frontend:latest
+        ports:
+        - name: http
+          containerPort: 80
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"

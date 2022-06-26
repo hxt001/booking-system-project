@@ -11,7 +11,7 @@ public class HelloWorldController {
 
 	@GetMapping("/")
 	public String index() {
-		return "Hello World!2";
+		return "Hello World!";
 	}
 
 	@GetMapping("todaysDate")

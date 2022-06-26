@@ -1,0 +1,20 @@
+name: CI workflow for frontend
+
+on: push
+  # push:
+  #   paths:
+  #     - "booking-system-ui/**"
+
+jobs:
+  build-and-push-frontend:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Image and Deploy
+        uses: ./.github/workflows/build-deploy.yml
+        with:
+          folder: backend
+          image_name: booking-backend
+          deployment_name: booking-backend

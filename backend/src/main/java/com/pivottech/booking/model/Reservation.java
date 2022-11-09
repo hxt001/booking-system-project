@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity(name = "Reservation")
-@Table(indexes = { @Index(name = "index_instructor_start_end", columnList = "utcStartTime, utcEndTime, student_id",
+@Table(indexes = { @Index(name = "index_student_start_end", columnList = "utcStartTime, utcEndTime, student_id",
 		unique = true) })
 @Data
 @Builder()
